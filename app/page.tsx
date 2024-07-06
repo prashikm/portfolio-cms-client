@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
@@ -15,6 +16,16 @@ export default async function Home() {
         <Button asChild>
           <Link href="/signup">Sign up</Link>
         </Button>
+      </div>
+
+      <div className="mt-10">
+        <Image
+          src="/image/prashik-portfolio.png"
+          alt="portfolio"
+          width={2000}
+          height={2000}
+          className="border border-gray-200 rounded-lg"
+        />
       </div>
     </main>
   );
