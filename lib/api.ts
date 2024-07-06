@@ -21,7 +21,6 @@ const apiService = {
 
     if (!response.ok) {
       const data = await response.json();
-
       return {
         error: {
           message: data,
@@ -39,7 +38,6 @@ const apiService = {
 
     if (!response.ok) {
       const data = await response.json();
-
       return {
         error: {
           message: data,

@@ -1,5 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
+import { ProjectType } from "@/lib/schema";
 import Link from "next/link";
+
+interface Props extends ProjectType {
+  username: string;
+}
 
 export default function ProjectCard({
   username,
@@ -7,7 +12,7 @@ export default function ProjectCard({
   title,
   description,
   image,
-}: any) {
+}: Props) {
   return (
     <Link href={`/${username}/project/${id}`} className="group rounded-lg">
       <div className="flex justify-center items-center">

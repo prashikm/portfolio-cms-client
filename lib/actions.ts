@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -98,4 +99,14 @@ export async function getRefreshToken() {
   let refreshToken = cookies().get("session_refresh_token")?.value;
 
   return refreshToken;
+}
+
+export async function revalidateData() {
+  const user = await getUser();
+
+  if (!user) {
+    return;
+  }
+
+  revalidatePath(`/${user.username}`, "page");
 }

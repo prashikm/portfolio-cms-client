@@ -26,6 +26,7 @@ import { useState } from "react";
 import { Loader2Icon } from "lucide-react";
 import apiService from "@/lib/api";
 import { handleLogin } from "@/lib/actions";
+import { toast } from "sonner";
 
 const signupSchema = z.object({
   username: z
@@ -82,6 +83,7 @@ export default function SignUpForm() {
 
     if (response.error) {
       console.log("Error: ", response.error);
+      toast.error(response.error.message.detail);
     } else {
       const resp = await apiService.postWithoutToken(
         "/api/token",
@@ -93,6 +95,7 @@ export default function SignUpForm() {
 
       if (resp.error) {
         console.log("Access token: ", resp.error);
+        toast.error(resp.error.message.detail);
       } else {
         handleLogin(
           JSON.stringify({

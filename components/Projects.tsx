@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { revalidateData } from "@/lib/actions";
 import apiService from "@/lib/api";
 import { ProjectType } from "@/lib/schema";
 import { UploadcareFile, UploadClient } from "@uploadcare/upload-client";
@@ -22,11 +23,17 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+interface ProjectsProps {
+  userProjects: ProjectType[];
+  isAuthenticated: boolean;
+  username: string;
+}
+
 export default function Projects({
   userProjects,
   isAuthenticated,
   username,
-}: any) {
+}: ProjectsProps) {
   const [isProjectCreationLoading, setIsProjectCreationLoading] =
     useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -51,9 +58,11 @@ export default function Projects({
       .uploadFile(file)
       .then((result: UploadcareFile) => {
         setProjectImg(result.cdnUrl);
+        toast.success("Image uploaded!");
       })
       .catch((error: any) => {
         console.log("error", error);
+        toast.error("Unable to upload image, please try again");
       })
       .finally(() => {
         setIsImageUploading(false);
@@ -63,7 +72,23 @@ export default function Projects({
   async function handleCreateProject(e: any) {
     e.preventDefault();
 
+    if (!e.target.title.value) {
+      toast.error("Please enter a title for your project");
+      return;
+    }
+
+    if (!e.target.description.value) {
+      toast.error("Please enter a description for your project");
+      return;
+    }
+
+    if (!projectImg) {
+      toast.error("Please upload an image for your project");
+      return;
+    }
+
     setIsProjectCreationLoading(true);
+
     const response = await apiService.post(
       "/api/projects/",
       JSON.stringify({
@@ -80,6 +105,8 @@ export default function Projects({
       setProjectImg(null);
       setOpen(false);
       setProjects([response, ...projects]);
+
+      await revalidateData();
     }
 
     setIsProjectCreationLoading(false);

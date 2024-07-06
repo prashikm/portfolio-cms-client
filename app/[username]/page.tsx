@@ -24,11 +24,11 @@ export default async function ProjectsPage({
   );
 
   if (projects.error) {
-    throw new Error("Error fetching projects");
+    throw new Error(projects.error.message.detail);
   }
 
   return (
-    <main className="mt-20 mb-56 max-w-4xl mx-auto px-6">
+    <main className="mt-20 mb-56 max-w-5xl mx-auto px-6">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

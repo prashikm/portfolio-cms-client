@@ -7,20 +7,17 @@ import { Input } from "@/components/ui/input";
 import apiService from "@/lib/api";
 import { UploadClient } from "@uploadcare/upload-client";
 import { ProjectType } from "@/lib/schema";
+import { toast } from "sonner";
 
 interface ProjectProps {
-  params: {
-    id: string;
-  };
+  projectDetails: ProjectType;
+  isAuthenticated: boolean;
 }
 
 export default function ProjectDetail({
   projectDetails,
   isAuthenticated,
-}: {
-  projectDetails: ProjectType;
-  isAuthenticated: boolean;
-}) {
+}: ProjectProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [project, setProject] = useState(projectDetails);
@@ -42,11 +39,12 @@ export default function ProjectDetail({
     client
       .uploadFile(file)
       .then((result: any) => {
-        console.log("result", result);
         setEditProject({ ...editProject, image: result.cdnUrl });
+        toast.success("Image uploaded!");
       })
       .catch((error: any) => {
         console.log("error", error);
+        toast.error("Unable to upload image, please try again");
       })
       .finally(() => {
         setIsImageUploading(false);
@@ -55,18 +53,20 @@ export default function ProjectDetail({
 
   const handleProjectUpdate = async () => {
     setIsUpdating(true);
-    try {
-      const response = await apiService.update(
-        `/api/project/update/${project.id}/`,
-        JSON.stringify(editProject)
-      );
+    const response = await apiService.update(
+      `/api/project/update/${project.id}/`,
+      JSON.stringify(editProject)
+    );
+
+    if (response.error) {
+      console.error(response.error);
+      toast.error(response.error.message.detail);
+    } else {
       setProject(editProject);
       setIsEditing(false);
-    } catch (error) {
-      console.error("Failed to update project:", error);
-    } finally {
-      setIsUpdating(false);
     }
+
+    setIsUpdating(false);
   };
 
   return (
@@ -141,6 +141,12 @@ export default function ProjectDetail({
             contentEditable={isEditing}
             suppressContentEditableWarning
             className="p-4 border border-gray-300 rounded-lg"
+            onInput={(e: any) =>
+              setEditProject({
+                ...editProject,
+                description: e.target.innerText,
+              })
+            }
           >
             {editProject.description}
           </div>
