@@ -5,20 +5,9 @@ export async function middleware(request: NextRequest) {
   const user = await getUser();
   const { pathname } = request.nextUrl;
 
-  // if (!user) {
-  //   if (
-  //     pathname.startsWith("/") &&
-  //     pathname !== "/login" &&
-  //     pathname !== "/signup" &&
-  //     pathname !== "/project"
-  //   ) {
-  //     return NextResponse.redirect(new URL("/login", request.url));
-  //   }
-  // }
-
   if (user) {
     if (pathname === "/login" || pathname === "/signup") {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL(`/${user.username}`, request.url));
     }
   }
 
