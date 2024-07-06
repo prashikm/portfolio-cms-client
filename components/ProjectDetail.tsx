@@ -8,6 +8,7 @@ import apiService from "@/lib/api";
 import { UploadClient } from "@uploadcare/upload-client";
 import { ProjectType } from "@/lib/schema";
 import { toast } from "sonner";
+import { revalidateData } from "@/lib/actions";
 
 interface ProjectProps {
   projectDetails: ProjectType;
@@ -64,6 +65,7 @@ export default function ProjectDetail({
     } else {
       setProject(editProject);
       setIsEditing(false);
+      await revalidateData();
     }
 
     setIsUpdating(false);
@@ -148,7 +150,7 @@ export default function ProjectDetail({
               })
             }
           >
-            {editProject.description}
+            {project.description}
           </div>
         ) : (
           <p className="md:text-lg">{project.description}</p>

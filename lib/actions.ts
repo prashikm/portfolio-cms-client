@@ -108,5 +108,5 @@ export async function revalidateData() {
     return;
   }
 
-  revalidatePath(`/${user.username}`, "page");
+  revalidatePath("/", "layout");
 }
